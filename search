@@ -1,0 +1,4 @@
+# find dictionary strings in binary
+
+comm -12 <(cat /usr/share/dict/words | sort) <(strings 8H39OS_.PGM | sort)
+
