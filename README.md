@@ -255,11 +255,16 @@ Two user waves in the sample file:
 
 ### DWAV — Wave Data
 
-Located at 0x0C22C0. The data section contains:
-1. A directory table (32-byte entries, same pattern as DKIT)
-2. Wave data blocks — stored in **Yamaha's proprietary sample encoding**, not raw PCM
+Located at 0x0C22C0. **Format fully decoded** — see [DWAV_FORMAT.md](DWAV_FORMAT.md) for complete documentation.
 
-Each wave directory entry has a metadata block at its data offset containing the filename, sample parameters (tuning, loop points, etc.) followed by the encoded audio data.
+Audio is stored as **raw 16-bit signed big-endian PCM at 44100 Hz mono** (no compression). Each wave block has a 64-byte header (containing sample rate, loop/boundary points, and format flags) followed by the raw PCM samples. A 32-byte filename/parameter metadata block precedes each wave header.
+
+Quick extraction reference:
+```python
+# actual PCM bytes = data_size - 64 (header) - 32 (trailing next-wave metadata, non-last wave only)
+pcm_bytes = data_size - 64 - 32
+samples = struct.unpack(f'>{pcm_bytes // 2}h', raw_data)  # big-endian int16
+```
 
 ---
 
@@ -297,9 +302,7 @@ The YSFC format uses sequential IDs across all entity types:
 
 5. **Section 3 8-byte table** (0x0C40–0x0F1F): what does each of the 92 entries represent? The `03 00 7F 00 00 00 09 XX` pattern with `XX` = MIDI note numbers suggests a per-note MIDI channel 10 assignment or parameter table.
 
-6. **Wave data encoding**: is the proprietary sample format documented anywhere, or can it be converted to/from standard WAV?
-
-7. **DPTN / Pattern data**: is this the drum pattern sequencer data? What does its structure look like?
+6. **DPTN / Pattern data**: is this the drum pattern sequencer data? What does its structure look like?
 
 8. **Round-trip verification**: Can a modified F.MTA be written back to the device via the same USB menu? What validation does the device perform?
 
