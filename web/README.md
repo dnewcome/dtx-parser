@@ -1,5 +1,7 @@
 # DTX Multi 12 Editor
 
+![DTX Multi 12 Editor](public/screenshot.png)
+
 A browser-only editor for Yamaha DTX Multi 12 backup files (`.MTA`). Load a backup, inspect all 200 kit slots, view and edit voice settings per pad, manage user wave files, and export a modified backup — no server, no install, all parsing runs in-browser.
 
 ## Running
